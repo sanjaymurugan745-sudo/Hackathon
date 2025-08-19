@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Secure App Challenge</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        #app {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <h1>Welcome to Our Secure Portal</h1>
+        <div id="content">
+            <p>Loading application data...</p>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const flag = "FLAG{advanced_xss_mastery}";
+
+            // Process all URL injection possibilities
+            const detectAndProcessInjection = function() {
+                // Standard parameter reflection
+                const urlParams = new URLSearchParams(window.location.search);
+
+                // Vulnerability 1: Named parameter reflection
+                urlParams.forEach((value, name) => {
+                    document.getElementById('content').innerHTML =
+                        `${name}: ${value}`;
+                    checkXss(value);
+                });
+
+                // Vulnerability 2: Unnamed parameters
+                if (window.location.search.includes('<') &&
+                    window.location.search.includes('>')) {
+                    const rawInjection = window.location.search
+                        .substring(1) // Remove leading ?
+                        .split('&')[0]; // First segment
+                    document.getElementById('content').innerHTML = rawInjection;
+                    checkXss(rawInjection);
+                }
+            };
+
+            // Check for successful XSS
+            const checkXss = function(input) {
+                const patterns = [
+                    /<script.*?>.*?alert\(.*?\).*?<\/script>/i,
+                    /<[a-z]+.*?on\w+=.*?alert\(.*?\).*?>/i,
+                    /javascript:alert\(.*?\)/i,
+                    /data:text\/html.*?alert\(.*?\)/i,
+                    /<\?.*?\?>.*?alert\(.*?\)/i,
+                    /<\w+:.*?alert\(.*?\)/i
+                ];
+
+                if (patterns.some(regex => regex.test(input))) {
+                    console.log(`%c[SYSTEM] XSS Detected! Flag: ${flag}`,
+                        'color: red; font-weight: bold; font-size: 14px');
+                }
+            };
+
+            // Initialize
+            detectAndProcessInjection();
+            console.log("[SYSTEM] Secure application initialized");
+        })();
+    </script>
+</body>
+
+</html>

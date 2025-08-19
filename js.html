@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>System Diagnostics</title>
+    <style>
+        body {
+            font-family: monospace;
+            background-color: #0a0a0a;
+            color: #00ff00;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        #console {
+            background-color: #000;
+            border: 1px solid #333;
+            padding: 15px;
+            height: 200px;
+            overflow-y: scroll;
+        }
+        
+        #input {
+            width: 100%;
+            background: #111;
+            color: #0f0;
+            border: 1px solid #333;
+            padding: 5px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>System Diagnostics Console</h1>
+    <div id="console"></div>
+    <input type="text" id="input" placeholder="Enter diagnostic command...">
+
+    <script>
+        // Obfuscated flag generator
+        const _0x3a7d = ['\x46\x4c\x41\x47\x7b\x6a\x73\x5f\x72\x65\x76\x65\x72\x73\x65\x5f\x65\x6e\x67\x69\x6e\x65\x65\x72\x7d',
+            '\x6c\x6f\x67', '\x63\x6f\x6e\x73\x6f\x6c\x65', '\x69\x6e\x66\x6f'
+        ];
+
+        (function(_0x1b9d2a, _0x3a7d8b) {
+            const _0x4e7d21 = function(_0x1b9d2a, _0x3a7d8b) {
+                return _0x1b9d2a + _0x3a7d8b;
+            };
+
+            window[_0x3a7d[2]][_0x3a7d[1]](_0x4e7d21(_0x3a7d[0], ''));
+        }(window, 0));
+
+        // Fake system diagnostics
+        const consoleOutput = document.getElementById('console');
+        const commands = {
+            'help': 'Available commands: status, scan, test, debug',
+            'status': 'System nominal\nMemory: 87% free\nCPU: 12% load',
+            'scan': 'Performing security scan...\nNo threats detected',
+            'test': 'Running diagnostic tests...\nAll systems operational',
+            'debug': 'Debug mode activated\nWarning: Restricted access'
+        };
+
+        document.getElementById('input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const cmd = this.value.trim();
+                this.value = '';
+
+                if (cmd === 'debug') {
+                    consoleOutput.innerHTML += '> ' + cmd + '\n';
+                    consoleOutput.innerHTML += 'Entering debug REPL...\n';
+                    consoleOutput.innerHTML += 'Try calling system._getInternalState()\n';
+                } else if (commands[cmd]) {
+                    consoleOutput.innerHTML += '> ' + cmd + '\n';
+                    consoleOutput.innerHTML += commands[cmd] + '\n';
+                } else {
+                    consoleOutput.innerHTML += '> ' + cmd + '\n';
+                    consoleOutput.innerHTML += 'Command not recognized\n';
+                }
+
+                consoleOutput.scrollTop = consoleOutput.scrollHeight;
+            }
+        });
+
+        // Initial message
+        consoleOutput.innerHTML = 'System boot complete\nType "help" for commands\n';
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>XSS Challenge</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        #content {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="content">
+        <h1>Secure Application Portal</h1>
+        <p>Status: <span id="status">Operational</span></p>
+    </div>
+
+    <script>
+        (function() {
+            // Store flag in localStorage (NOT in source code)
+            if (!localStorage.getItem("ctf_flag")) {
+                localStorage.setItem("ctf_flag", "FLAG{xss_popup_master}");
+            }
+
+            // Process URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+
+            // Function to check for XSS payloads
+            const checkForXss = function(input) {
+                const patterns = [
+                    /<script.*?>.*?<\/script>/i,
+                    /<.*?on\w+=.*?>/i,
+                    /javascript:.*/i,
+                    /data:text\/html/i
+                ];
+
+                if (patterns.some(regex => regex.test(input))) {
+                    // 🎉 Reveal flag only when XSS payload is detected
+                    const flag = localStorage.getItem("ctf_flag");
+                    alert("Congratulations! You found the flag: " + flag);
+                    console.log("XSS Triggered! Flag:", flag);
+                    return true;
+                }
+                return false;
+            };
+
+            // Reflect parameter values into the page (vulnerability)
+            urlParams.forEach((value, name) => {
+                const statusElement = document.getElementById('status');
+                statusElement.innerHTML = `${name}: ${value}`;
+                if (checkForXss(value)) return;
+            });
+
+            // Also check raw query string for unnamed payloads
+            if (window.location.search.includes('<')) {
+                const rawQuery = window.location.search.substring(1);
+                if (checkForXss(rawQuery)) {
+                    document.getElementById('status').textContent = rawQuery;
+                }
+            }
+
+            console.log("Application security check complete");
+        })();
+    </script>
+</body>
+
+</html>

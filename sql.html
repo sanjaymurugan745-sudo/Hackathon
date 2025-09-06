@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Coding Lab</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .hidden-content {
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    <div class="container mx-auto px-4 py-8 max-w-3xl">
+        <div class="bg-white shadow rounded-lg p-6 mb-6">
+            <h1 class="text-2xl font-bold text-gray-800 mb-4">Authentication Portal</h1>
+            <form id="authForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                    <input type="text" id="username" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <input type="password" id="password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300">
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition">
+          Sign In
+        </button>
+            </form>
+
+            <div id="authResult" class="mt-4"></div>
+
+            <div id="eduContent" class="hidden-content mt-6">
+                <div class="p-4 bg-yellow-50 border-l-4 border-yellow-500 mb-4">
+                    <h3 class="font-bold text-yellow-800">Security Alert</h3>
+                    <p class="mt-1 text-sm text-yellow-700">
+                        SQL injection vulnerability detected from your input.
+                    </p>
+                </div>
+
+                <div class="p-4 bg-green-50 border-l-4 border-green-500">
+                    <h3 class="font-bold text-green-800">Learning Objective Completed</h3>
+                    <p class="mt-1 text-sm text-green-700">
+                        You've discovered an authentication bypass vulnerability.
+                    </p>
+                    <div class="mt-3 p-3 bg-white border rounded">
+                        <p id="flagOutput" class="font-mono text-sm text-gray-800"></p>
+                    </div>
+                </div>
+
+                <div class="mt-6 p-4 bg-gray-50 rounded border">
+                    <h4 class="font-bold text-gray-800 mb-2">Secure Coding Solution</h4>
+                    <pre class="p-3 bg-gray-800 text-gray-100 rounded text-sm overflow-x-auto">// Parameterized query example (Node.js)
+const query = 'SELECT * FROM users WHERE username = $1 AND password = $2';
+pool.query(query, [username, hashedPassword], (error, results) => {
+    // Authentication logic
+});</pre>
+                    <p class="mt-2 text-sm text-gray-600">
+                        Always use parameterized queries to prevent SQL injection.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center text-sm text-gray-500">
+            <p>Educational lab - Do not use for unauthorized testing</p>
+        </div>
+    </div>
+
+    <script>
+        const flagParts = [
+            "U0VDVVJJVFlfRkxBRzo=", "U1FMSV9NQVNURVJf", "e0JZUFA0U1MzRF9USDNf",
+        ];
+        const getFlag = () => flagParts.map(p => atob(p)).join("");
+
+        document.getElementById('authForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const resultDiv = document.getElementById('authResult');
+
+            if (username === 'admin' && password === 'securepassword123') {
+                resultDiv.innerHTML = `<div class="p-3 bg-green-100 text-green-800 rounded">
+          Successful authentication as administrator
+        </div>`;
+                document.getElementById('eduContent').classList.add('hidden-content');
+            } else if (
+                username.includes("' OR '1'='1") || username.includes("' OR 1=1--") ||
+                password.includes("' OR '1'='1") || password.includes("' OR 1=1--")
+            ) {
+                resultDiv.innerHTML = `<div class="p-3 bg-green-100 text-green-800 rounded">
+          Authentication successful (security vulnerability triggered)
+        </div>`;
+                document.getElementById('eduContent').classList.remove('hidden-content');
+                document.getElementById('flagOutput').textContent = getFlag();
+            } else {
+                resultDiv.innerHTML = `<div class="p-3 bg-red-100 text-red-800 rounded">
+          Invalid credentials
+        </div>`;
+                document.getElementById('eduContent').classList.add('hidden-content');
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Command Injection Lab</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Consolas', 'Courier New', monospace;
+            background-color: #121212;
+            color: #00ffff;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: #1e1e1e;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+            padding: 30px 40px;
+        }
+        
+        h2 {
+            margin-top: 0;
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 25px;
+            user-select: none;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            color: #00e5e5;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 1.1rem;
+            border: 2px solid #00ffff;
+            border-radius: 6px;
+            background-color: #121212;
+            color: #00ffff;
+            transition: border-color 0.3s ease;
+            outline-offset: 2px;
+        }
+        
+        input[type="text"]:focus {
+            border-color: #00ffea;
+            outline: none;
+            box-shadow: 0 0 8px #00ffea;
+        }
+        
+        button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 14px 0;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #121212;
+            background: linear-gradient(90deg, #00ffff, #00b3b3);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            user-select: none;
+        }
+        
+        button:hover,
+        button:focus {
+            background: linear-gradient(90deg, #00b3b3, #00ffff);
+            outline: none;
+        }
+        
+        pre#output {
+            margin-top: 30px;
+            background-color: #0a0a0a;
+            border: 1px solid #00ffff;
+            border-radius: 6px;
+            padding: 20px;
+            font-size: 1rem;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            min-height: 120px;
+            user-select: text;
+            color: #00ffea;
+            box-shadow: inset 0 0 10px #00ffff;
+        }
+        
+        h2::before {
+            content: "🖥️ ";
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container" role="main" aria-label="Command Injection Lab Ping Utility">
+        <h2>Ping Utility</h2>
+        <label for="host">Enter host (e.g. google.com):</label>
+        <input type="text" id="host" name="host" placeholder="e.g. google.com" autocomplete="off" spellcheck="false" />
+        <button type="button" onclick="ping()" aria-live="polite" aria-describedby="output">Ping</button>
+        <pre id="output" aria-live="polite" aria-atomic="true"></pre>
+    </div>
+
+    <script>
+        const parts = [
+            "RkxBR3s=",
+            "Y21kX2V4ZWM=",
+            "X3Z1bG4=",
+            "fQ=="
+        ];
+        const getFlag = () => parts.map(p => atob(p)).join("");
+
+        function ping() {
+            const hostInput = document.getElementById('host');
+            const output = document.getElementById('output');
+            const host = hostInput.value.trim();
+
+            if (!host) {
+                output.textContent = 'Error: Please enter a host to ping.';
+                return;
+            }
+
+            let result = "";
+
+            if (host.includes(";")) {
+                result = "Command injection detected! 🎉 " + getFlag();
+            } else {
+                result = `Pinging ${host}...\nReply from 93.184.216.34: time=32ms\nDone.`;
+            }
+
+            output.textContent = result;
+        }
+    </script>
+</body>
+
+</html>
